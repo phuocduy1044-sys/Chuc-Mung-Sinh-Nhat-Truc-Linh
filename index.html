@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chúc mừng sinh nhật Trúc Linh - Tuổi 19</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="bg-stars-container"></div>
+
+    <section id="scene-1" class="scene active">
+        <div class="content">
+            <p id="text-1-1" class="type-text"></p>
+            <p id="text-1-2" class="type-text"></p>
+            <p id="text-1-3" class="type-text"></p>
+            <button id="btn-start" class="btn" style="opacity: 0; pointer-events: none;">Bắt đầu</button>
+        </div>
+    </section>
+
+    <section id="scene-2" class="scene">
+        <svg id="constellation-svg"></svg>
+        <div class="star-map"></div>
+        <div id="guide-text" class="guide-box">Em hãy nhấn vào đốm sáng nhấp nháy đó đi ✨</div>
+    </section>
+
+    <section id="scene-3" class="scene">
+        <div id="star-7"></div>
+        <div class="content" style="margin-top: 15vh;">
+            <p id="text-3-1" class="fade-text-slow"></p>
+            <p id="text-3-2" class="fade-text-slow"></p>
+            <p id="text-3-3" class="fade-text-slow"></p>
+            <p id="text-3-4" class="highlight fade-text-slow"></p>
+        </div>
+    </section>
+
+    <section id="scene-4" class="scene">
+        <div class="card-container">
+            <div class="card-left">
+                <div class="polaroid grid-item"><img src="assets/images/linh-1.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-2.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-3.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-4.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-5.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-6.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-7.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-8.jpg" alt="Linh"></div>
+                <div class="polaroid grid-item"><img src="assets/images/linh-9.jpg" alt="Linh"></div>
+            </div>
+            <div class="card-right" style="opacity: 0;" id="card-text">
+                <div class="card-decor">
+                    <div class="divider" style="margin-top: 0;">✧ ✦ ✧</div>
+                    <p class="script-font" style="color: #e6c27a;">Chương mới bắt đầu ✨</p>
+                    <div class="wish-scroll-container">
+                        <p class="wish-text">Chúc mừng sinh nhật em.<br><br>Anh không biết tuổi mới sẽ mang đến cho em những điều gì. Nhưng anh mong em sẽ luôn giữ được những nụ cười thật lòng, có thêm thật nhiều kỷ niệm đáng nhớ và thật nhiều điều tốt đẹp.<br><br>Mong những người em trân quý vẫn luôn bình an.<br><br>Chúc em có một tuổi mới thật rực rỡ.</p>
+                    </div>
+                    <button id="btn-next-cake" class="btn card-btn">Tiếp tục</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="scene-6" class="scene">
+        <div class="content">
+            <div class="cake-wrapper">
+                <img src="assets/images/cake.png" class="cake" alt="Bánh kem">
+                <img src="assets/images/age18.png" id="age-img" class="age" alt="18">
+                <div id="cake-message" class="message">Cảm ơn tuổi 18</div>
+            </div>
+            
+            <div class="action-area" style="margin-top: 50px; min-height: 100px;">
+                <p id="candle-text" style="opacity: 0; margin-bottom: 10px;">Em hãy ước một điều gì đó nhé.</p>
+                <button id="btn-blow" class="btn" style="display: none; margin-top: 10px;">Thổi nến</button>
+            </div>
+        </div>
+    </section>
+
+    <section id="scene-transition" class="scene">
+        <div class="content">
+            <p id="trans-text-1" style="opacity: 0;">Trên bầu trời này có: 1.407 ngôi sao.</p>
+            <p id="trans-text-2" style="opacity: 0; margin-top: 3vh;">Anh đã dùng từng dòng code<br>để tạo nên bầu trời ấy.</p>
+            <p id="trans-text-3" style="opacity: 0; margin-top: 3vh;">Có lẽ vì anh từng thấy.<br>Một thiên hà rất đẹp.<br>Trong "ánh mắt" của một người.</p>
+            <button id="btn-stop" class="btn" style="opacity: 0; display: none; margin-top: 5vh;">Cảm ơn em 🌙</button>
+        </div>
+    </section>
+
+    <section id="scene-7" class="scene">
+        <div class="content ending">
+            <p class="final-text">Cảm ơn em vì đã từng là một phần thanh xuân của anh.</p>
+            <p class="date">14.07.2007</p>
+        </div>
+    </section>
+
+    <div id="shooting-star-container">
+        <div class="shooting-star-tail"></div>
+        <svg class="shooting-star-icon" viewBox="0 0 24 24">
+            <path d="M12,2 L15.09,8.26 L22,9.27 L17,14.14 L18.18,21.02 L12,17.77 L5.82,21.02 L7,14.14 L2,9.27 L8.91,8.26 L12,2 Z"></path>
+        </svg>
+    </div>
+
+    <audio id="audio-cake" src="assets/audio/Happy_Birthday.m4a" preload="auto"></audio>
+    <audio id="audio-ending" src="assets/audio/Kho Báu.m4a" preload="auto"></audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

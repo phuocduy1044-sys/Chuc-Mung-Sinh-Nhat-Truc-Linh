@@ -1,0 +1,554 @@
+/* =========================================
+   CÀI ĐẶT CHUNG TỐI ƯU
+   ========================================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Loại bỏ nháy đen khi ấn trên điện thoại */
+}
+
+body {
+    background: radial-gradient(ellipse at bottom, #2b1055 0%, #050b14 100%);
+    color: #ffffff;
+    font-family: 'Cormorant Garamond', serif;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    height: 100dvh; /* Hỗ trợ thanh trình duyệt di động */
+}
+
+/* =========================================
+   BACKGROUND: BẦU TRỜI SAO
+   ========================================= */
+#bg-stars-container {
+    position: absolute;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    z-index: 0; 
+    pointer-events: none;
+    will-change: transform; /* Tối ưu hiệu suất render sao li ti */
+}
+
+.tiny-star-bg {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.tiny-star-bg.blink-effect {
+    animation: twinkleStar 3s infinite ease-in-out alternate;
+}
+
+@keyframes twinkleStar {
+    0% { opacity: 0.1; transform: scale(0.5); }
+    100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px #fff; }
+}
+
+/* =========================================
+   BỐ CỤC CHUYỂN CẢNH (SCENES)
+   ========================================= */
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 10;
+    transition: opacity 1s ease-in-out, visibility 1s;
+}
+
+.scene.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* =========================================
+   TYPOGRAPHY & THÀNH PHẦN CHUNG
+   ========================================= */
+.content {
+    text-align: center;
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.content p {
+    font-size: 1.8rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    min-height: 40px;
+}
+
+.script-font {
+    font-family: 'Great Vibes', cursive;
+    font-size: 4rem;
+}
+
+.highlight {
+    color: #e6c27a;
+    font-weight: 600;
+}
+
+/* Ghi đè CSS phần nút bấm .btn trong file style.css */
+.btn {
+    background: rgba(230, 194, 122, 0.05); /* Thêm nền mờ nhạt */
+    border: 1px solid rgba(230, 194, 122, 0.7);
+    color: #e6c27a;
+    padding: 12px 35px;
+    font-size: 1.3rem;
+    font-family: 'Cormorant Garamond', serif;
+    cursor: pointer;
+    border-radius: 30px;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); /* Chuyển động mượt và tự nhiên hơn */
+    margin-top: 30px;
+    letter-spacing: 2px;
+    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(4px); /* Hiệu ứng kính mờ */
+}
+
+@media (hover: hover) {
+    .btn:hover {
+        background: #e6c27a;
+        color: #050b14;
+        box-shadow: 0 0 20px rgba(230, 194, 122, 0.5);
+        transform: translateY(-2px); /* Nút nhích nhẹ lên khi lướt qua */
+    }
+}
+
+.btn:active {
+    transform: scale(0.95); /* Độ lún mềm mại */
+    background: rgba(230, 194, 122, 0.9);
+    color: #050b14;
+    box-shadow: 0 0 10px rgba(230, 194, 122, 0.4);
+    transition: all 0.1s ease; /* Phản hồi chạm ngay lập tức */
+}
+/* =========================================
+   MÀN 2: CHÒM SAO CỰ GIẢI
+   ========================================= */
+#constellation-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.constellation-line {
+    stroke: rgba(230, 194, 122, 0.6);
+    stroke-width: 2;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+}
+
+.star-map {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+}
+
+.star-point {
+    position: absolute;
+    width: 35px; /* Khu vực chạm (hit area) lớn hơn cho điện thoại */
+    height: 35px;
+    background: radial-gradient(circle, #f3c704 15%, transparent 45%); /* Thu nhỏ chấm trắng hiển thị bằng gradient */
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    transition: background 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.star-point::after {
+    content: "★"; 
+    position: absolute;
+    font-size: 85px; 
+    color: #e6c27a;
+    opacity: 0;
+    transform: scale(0) rotate(-45deg);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+.star-point.blink {
+    animation: blinkStarPoint 1.5s infinite alternate;
+}
+
+.star-point.clicked {
+    background: transparent; 
+    animation: none;
+}
+
+.star-point.clicked::after {
+    opacity: 1;
+    transform: scale(1) rotate(0deg); 
+    text-shadow: 0 0 15px #e6c27a, 0 0 30px rgba(255, 255, 255, 0.8); 
+}
+
+.star-tooltip {
+    position: absolute;
+    background: rgba(20, 10, 40, 0.9);
+    border: 1px solid #e6c27a;
+    color: #fdfbf7;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    top: -66px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: 0.5s;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.star-point.clicked .star-tooltip {
+    opacity: 1;
+}
+
+@keyframes blinkStarPoint {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.5; filter: drop-shadow(0 0 5px #fff); }
+    100% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; filter: drop-shadow(0 0 15px #fff); }
+}
+
+.guide-box {
+    position: absolute;
+    bottom: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(230, 194, 122, 0.15);
+    border: 1px solid rgba(230, 194, 122, 0.5);
+    color: #fdfbf7;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    pointer-events: none;
+    opacity: 0; 
+    z-index: 10;
+    box-shadow: 0 0 15px rgba(230, 194, 122, 0.2);
+    animation: floatGuide 2s infinite alternate ease-in-out;
+    text-align: center;
+    width: 85%;
+    max-width: 400px;
+}
+
+@keyframes floatGuide {
+    0% { transform: translateX(-50%) translateY(0); }
+    100% { transform: translateX(-50%) translateY(-10px); }
+}
+
+/* =========================================
+   MÀN 3: NGÔI SAO THỨ 7
+   ========================================= */
+#star-7 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+}
+
+#star-7::after {
+    content: "★";
+    position: absolute;
+    font-size: 100px;
+    color: #e6c27a;
+    text-shadow: 0 0 20px #e6c27a, 0 0 40px rgba(255, 255, 255, 0.8);
+    animation: pulseStar7 2s infinite alternate;
+}
+
+@keyframes pulseStar7 {
+    0% { transform: scale(0.9); text-shadow: 0 0 15px #e6c27a; }
+    100% { transform: scale(1.1); text-shadow: 0 0 30px #e6c27a, 0 0 60px rgba(255, 255, 255, 1); }
+}
+
+/* =========================================
+   MÀN 4: THIỆP & LƯỚI ẢNH
+   ========================================= */
+.card-container {
+    display: flex;
+    flex-direction: row;
+    width: 95vw;
+    max-width: 1100px;
+    height: 85vh;
+    background: #fcf9f2;
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(230, 194, 122, 0.2);
+    overflow: hidden;
+}
+
+.card-left {
+    width: 55%;
+    padding: 15px;
+    background: #ebe6d9;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 8px;
+    align-items: stretch;
+    height: 100%;
+}
+
+.polaroid.grid-item {
+    background: #fff;
+    padding: 4px 4px 15px 4px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.polaroid.grid-item:hover {
+    transform: scale(1.1) rotate(2deg) !important;
+    z-index: 10;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+}
+
+.polaroid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-right {
+    width: 45%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-decor {
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #d4af37;
+    border-radius: 10px;
+    padding: 20px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.divider {
+    font-size: 1.5rem;
+    color: #d4af37;
+    margin: 10px 0;
+    letter-spacing: 5px;
+}
+
+.wish-scroll-container {
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 0 10px;
+}
+
+.wish-scroll-container::-webkit-scrollbar {
+    width: 4px;
+}
+.wish-scroll-container::-webkit-scrollbar-thumb {
+    background: #d4af37;
+    border-radius: 4px;
+}
+
+.wish-text {
+    color: #4a4a4a;
+    font-size: 1.25rem;
+    line-height: 1.7;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+.card-btn {
+    border-color: #2c2c2c;
+    color: #2c2c2c;
+    margin-top: 10px;
+}
+
+.card-btn:hover {
+    background: #2c2c2c;
+    color: #fdfbf7;
+    box-shadow: none;
+}
+
+/* =========================================
+   MÀN 6: HOẠT CẢNH BÁNH KEM
+   ========================================= */
+#scene-6 .content {
+    max-width: 800px;
+    width: 100%;
+}
+
+.cake-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.cake-wrapper .cake {
+    width: 100%;
+    height: auto;
+    max-height: 60vh; /* Tối ưu để không đè nút trên mobile */
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+}
+
+.cake-wrapper .age {
+    position: absolute;
+    width: 17%; 
+    left: 50%;
+    top: 27.5%; 
+    transform: translateX(-50%);
+    z-index: 10;
+    transition: opacity 1.2s ease, transform 1.2s ease;
+}
+
+.cake-wrapper .message {
+    position: absolute;
+    width: 100%;
+    bottom: -10%;
+    text-align: center;
+    color: #e6c27a;
+    font-family: 'Great Vibes', cursive;
+    font-size: 3rem;
+    opacity: 0;
+    transition: 1s;
+    text-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.cake-wrapper .show { opacity: 1; }
+.cake-wrapper .zoom { transform: translateX(-50%) scale(1.2); }
+
+.star-fx {
+    position: absolute;
+    color: #ffbf00;
+    font-size: 3rem;
+    pointer-events: none;
+    z-index: 20;
+    animation: fly 2s linear forwards;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes fly {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(0.2); }
+}
+
+/* =========================================
+   HIỆU ỨNG SAO BĂNG KẾT THÚC
+   ========================================= */
+#shooting-star-container {
+    position: absolute;
+    display: none;
+    z-index: 999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.shooting-star-tail {
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    width: 300px;
+    height: 4px;
+    background: linear-gradient(to left, rgba(255,255,255,0) 0%, rgba(230,194,122,0.8) 50%, #fff 100%);
+    transform: translateY(-50%);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 10px #e6c27a);
+}
+
+.shooting-star-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    fill: #fff;
+    filter: drop-shadow(0 0 20px #e6c27a) drop-shadow(0 0 30px #fff);
+}
+
+/* =========================================
+   MÀN 7: KẾT THÚC
+   ========================================= */
+.final-text {
+    font-size: 2.2rem;
+    color: #f0f0f0;
+}
+
+.date {
+    font-size: 1.5rem;
+    color: #999;
+    margin-top: 40px;
+    letter-spacing: 5px;
+}
+
+/* =========================================
+   TỐI ƯU GIAO DIỆN DI ĐỘNG (MOBILE)
+   ========================================= */
+@media (max-width: 768px) {
+    .content p { font-size: 1.4rem; margin-bottom: 15px; }
+    .script-font { font-size: 2.5rem; }
+    
+    .card-container { 
+        flex-direction: column; 
+        height: 90vh; 
+    }
+    
+    .card-left { 
+        width: 100%; 
+        height: 45%; /* Chia lại tỉ lệ không gian cho điện thoại */
+        gap: 5px;
+        padding: 10px;
+    }
+    
+    .polaroid.grid-item { padding: 3px 3px 10px 3px; }
+    
+    .card-right { 
+        width: 100%; 
+        height: 55%; 
+        padding: 10px; 
+    }
+    
+    .card-decor { padding: 15px 10px; }
+    .wish-text { font-size: 1.1rem; margin-top: 10px; margin-bottom: 15px; }
+    .wish-scroll-container { max-height: 25vh; }
+    
+    .cake-wrapper .cake { max-height: 45vh; }
+    .cake-wrapper .message { font-size: 2.2rem; bottom: -15%; }
+    
+    #star-7::after { font-size: 70px; }
+    .star-point::after { font-size: 60px; }
+    
+    .final-text { font-size: 1.6rem; }
+    
+    .action-area { margin-top: 30px !important; }
+}
