@@ -8,20 +8,18 @@ document.addEventListener("DOMContentLoaded", () => {
     
     for (let i = 0; i < 1407; i++) { 
         let star = document.createElement("div");
-        star.className = "tiny-star-bg";
         let size = Math.random() * 2 + 0.5; // Kích thước tối ưu không gây nhiễu
-        star.style.width = size + "px";
-        star.style.height = size + "px";
-        star.style.top = Math.random() * 100 + "%";
-        star.style.left = Math.random() * 100 + "%";
-        
-        if (Math.random() < 0.25) { // 25% nhấp nháy để mượt mắt
-            star.classList.add("blink-effect");
-            star.style.animationDelay = (Math.random() * 4) + "s";
-        } else {
-            star.style.opacity = Math.random() * 0.6 + 0.1;
-        }
-        
+        let top = Math.random() * 100;
+        let left = Math.random() * 100;
+        const isBlink = Math.random() < 0.35; // 35% nhấp nháy
+
+        // Gộp toàn bộ style vào 1 lần ghi (cssText) thay vì set từng thuộc tính riêng lẻ,
+        // giảm số lần trình duyệt phải tính toán lại style cho từng ngôi sao trong 1407 sao.
+        star.className = isBlink ? "tiny-star-bg blink-effect" : "tiny-star-bg";
+        star.style.cssText = isBlink
+            ? `width:${size}px;height:${size}px;top:${top}%;left:${left}%;animation-delay:${Math.random() * 4}s;`
+            : `width:${size}px;height:${size}px;top:${top}%;left:${left}%;opacity:${Math.random() * 0.6 + 0.1};`;
+
         starFragment.appendChild(star);
     }
     bgStarsContainer.appendChild(starFragment);
@@ -202,6 +200,7 @@ document.addEventListener("DOMContentLoaded", () => {
         function createStars() {
             const container = document.querySelector(".cake-wrapper");
             const fxFragment = document.createDocumentFragment();
+            const range = window.innerWidth < 768 ? 250 : 400; // tính 1 lần, không lặp lại 100 lần trong vòng lặp
 
             for(let i=0; i<100; i++) { // Giảm số lượng xuống 100 để mượt hơn trên điện thoại
                 const star = document.createElement("div");
@@ -210,12 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 star.style.left = "50%";
                 star.style.top = "35%"; 
                 
-                let range = window.innerWidth < 768 ? 250 : 400;
                 star.style.setProperty("--x", (Math.random() * range - range/2) + "px");
                 star.style.setProperty("--y", (Math.random() * range - range/2) + "px");
                 
+                star.addEventListener("animationend", () => star.remove(), { once: true }); // dọn dẹp đúng lúc animation kết thúc, không phụ thuộc số ms cố định
                 fxFragment.appendChild(star);
-                setTimeout(() => star.remove(), 2000); 
             }
             container.appendChild(fxFragment);
         }
@@ -228,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 3500);
 
         setTimeout(() => { 
-            age.src = "assets/images/age19.png"; 
+            age.src = "asset/images/age19.png"; 
             age.style.opacity = "1"; 
             age.classList.remove("zoom"); 
         }, 5500);
