@@ -31,22 +31,26 @@ body {
     height: 100%;
     z-index: 0; 
     pointer-events: none;
-    will-change: transform; /* Tối ưu hiệu suất render sao li ti */
+    contain: strict; /* Cô lập layout/paint/size của 1407 sao con, tránh ảnh hưởng phần còn lại của trang */
 }
 
 .tiny-star-bg {
     position: absolute;
-    background: #fff;
     border-radius: 50%;
+    /* Glow vẽ sẵn bằng gradient (paint 1 lần) thay vì box-shadow động (paint lại mỗi frame) */
+    background: radial-gradient(circle, #fff 35%, rgba(255,255,255,0.25) 65%, rgba(255,255,255,0) 100%);
 }
 
 .tiny-star-bg.blink-effect {
     animation: twinkleStar 3s infinite ease-in-out alternate;
+    /* Chỉ ~35% số sao nhấp nháy mới cần layer riêng, không áp cho cả 1407 sao */
+    will-change: opacity, transform;
 }
 
 @keyframes twinkleStar {
-    0% { opacity: 0.1; transform: scale(0.5); }
-    100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px #fff; }
+    /* Chỉ opacity + transform: cả 2 đều chạy trên compositor, không gây tính lại layout/paint như box-shadow */
+    0% { opacity: 0.15; transform: scale(0.6); }
+    100% { opacity: 1; transform: scale(1.4); }
 }
 
 /* =========================================
